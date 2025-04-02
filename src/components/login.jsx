@@ -11,25 +11,18 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
-    // Reset previous messages
     setError('');
     setSuccess('');
-
-    // Prepare request body
     const requestBody = {
       email: email,
       password: password
     };
 
     try {
-      // Validate input
       if (!email || !password) {
         setError('Please enter both email and password');
         return;
       }
-
-      // API call to login
       const response = await fetch('http://localhost:5055/login', {
         method: 'POST',
         headers: {
@@ -38,29 +31,20 @@ function Login() {
         body: JSON.stringify(requestBody)
       });
 
-      // Parse the response
       const data = await response.json();
 
-      // Handle different response scenarios
       if (data.success) {
-        // Success scenario
         setSuccess(data.message);
-        
-        // Store token and email in localStorage
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userEmail', email); // Store user's email
-        
-        // Redirect after successful login
+        localStorage.setItem('userEmail', email); 
         setTimeout(() => {
           // Navigate to dashboard or home page
           navigate('/Dashboard');
         }, 2000);
       } else {
-        // Error scenario (invalid credentials or other errors)
         setError(data.error || 'Login failed');
       }
     } catch (err) {
-      // Network error or other unexpected errors
       console.error('Login Error:', err);
       setError('Something went wrong. Please try again.');
     }
