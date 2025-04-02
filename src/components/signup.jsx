@@ -12,17 +12,16 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     
-    // Reset previous messages
     setError('');
     setSuccess('');
 
-    // Prepare request body
+    
     const requestBody = {
       email: email,
       password: password
     };
 
-    // Log request details to console
+  
     console.log('Signup Request:', {
       url: 'http://localhost:5055/register',
       method: 'POST',
@@ -30,13 +29,13 @@ function Signup() {
     });
 
     try {
-      // Validate input
+      
       if (!email || !password) {
         setError('Please enter both email and password');
         return;
       }
 
-      // API call to register
+    
       const response = await fetch('http://localhost:5055/register', {
         method: 'POST',
         headers: {
@@ -45,21 +44,21 @@ function Signup() {
         body: JSON.stringify(requestBody)
       });
 
-      // Parse the response
+     
       const data = await response.json();
 
-      // Log response details to console
+    
       console.log('Signup Response:', {
         status: response.status,
         body: data
       });
 
-      // Handle different response scenarios
+     
       if (data.success) {
-        // Success scenario
+        
         setSuccess(data.message);
         
-        // Optional: Auto-redirect after success or show success message
+       
         setTimeout(() => {
           navigate('/login');
         }, 2000);
@@ -68,7 +67,6 @@ function Signup() {
         setError(data.error || 'Registration failed');
       }
     } catch (err) {
-      // Network error or other unexpected errors
       console.error('Signup Error:', err);
       setError('Something went wrong. Please try again.');
     }
