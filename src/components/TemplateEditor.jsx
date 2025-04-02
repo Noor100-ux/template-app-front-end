@@ -8,7 +8,6 @@ const TemplateEditor = ({ template, onBack }) => {
   const [templateHeight, setTemplateHeight] = useState(template.height);
   const [backgroundImage, setBackgroundImage] = useState(template.imageUrl || null);
   const [selectedElement, setSelectedElement] = useState(null);
-  // State for text, image, and shape elements
   const [elements, setElements] = useState(template.previewElements || [
     {
       id: Date.now(),
@@ -29,8 +28,6 @@ const TemplateEditor = ({ template, onBack }) => {
   const templateRef = useRef(null);
   const fileInputRef = useRef(null);
   const backgroundFileInputRef = useRef(null);
-
-  // State to store user email (in a real app, this would come from authentication context)
   const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
@@ -61,47 +58,37 @@ const TemplateEditor = ({ template, onBack }) => {
   };
 
   const handleShareViaEmail = async () => {
-    // Reset previous messages
     setShareError('');
     setShareSuccess('');
 
-    // Validate email
+    
     if (!userEmail) {
       setShareError('No email found. Please log in.');
       return;
     }
 
-    // Prevent multiple simultaneous share attempts
+    
     if (isSharing) return;
 
     setIsSharing(true);
 
     try {
-      // Generate the template image
       const dataUrl = await toPng(templateRef.current, { 
         cacheBust: true,
         width: templateWidth,
         height: templateHeight 
       });
-
-      // Convert data URL to Blob
       const response = await fetch(dataUrl);
       const blob = await response.blob();
-
-      // Create FormData
       const formData = new FormData();
       formData.append('file', blob, `${template.name}_template.png`);
       formData.append('email', userEmail);
-
-      // Send email via API
       const emailResponse = await fetch('http://localhost:5055/sendemail', {
         method: 'POST',
         body: formData
       });
 
       const result = await emailResponse.json();
-
-      // Handle response
       if (result.success) {
         setShareSuccess(result.message);
       } else {
@@ -114,8 +101,6 @@ const TemplateEditor = ({ template, onBack }) => {
       setIsSharing(false);
     }
   };
-
-  // Elements creation functions
   const addTextElement = () => {
     const newTextElement = {
       id: Date.now(),
@@ -189,14 +174,11 @@ const TemplateEditor = ({ template, onBack }) => {
     setElements(elements.filter(element => element.id !== id));
   };
 
-  // Event handlers for dragging
+  
   const handleMouseDown = (e, element) => {
-    // Prevent default to avoid unwanted text selection
     e.preventDefault();
     
     const templateRect = templateRef.current.getBoundingClientRect();
-    
-    // Calculate initial offset
     const offsetX = e.clientX - (element.position.x + templateRect.left);
     const offsetY = e.clientY - (element.position.y + templateRect.top);
   
@@ -209,8 +191,6 @@ const TemplateEditor = ({ template, onBack }) => {
     // Set this as the selected element
     setSelectedElement(element.id);
   };
-
-  // Event handlers for resizing
   const handleResizeStart = (e, element, direction) => {
     e.preventDefault();
     e.stopPropagation();
@@ -231,15 +211,10 @@ const TemplateEditor = ({ template, onBack }) => {
   };
 
   const handleMouseMove = (e) => {
-    // Handle dragging
     if (draggedElement) {
       const templateRect = templateRef.current.getBoundingClientRect();
-      
-      // Calculate new position
       const newX = e.clientX - draggedElement.offsetX - templateRect.left;
       const newY = e.clientY - draggedElement.offsetY - templateRect.top;
-  
-      // Determine element width/height for boundary checking
       let elementWidth = 200;
       let elementHeight = 50;
   
@@ -252,7 +227,6 @@ const TemplateEditor = ({ template, onBack }) => {
         elementHeight = draggedElement.fontSize * 1.2;
       }
   
-      // Update the position of the dragged element
       updateElement(draggedElement.id, {
         position: {
           x: Math.max(0, Math.min(newX, templateWidth - elementWidth)),
@@ -261,7 +235,7 @@ const TemplateEditor = ({ template, onBack }) => {
       });
     }
     
-    // Handle resizing
+  
     if (resizingElement && resizeDirection) {
       const dx = e.clientX - resizingElement.startX;
       const dy = e.clientY - resizingElement.startY;
@@ -271,7 +245,6 @@ const TemplateEditor = ({ template, onBack }) => {
       let newX = resizingElement.startLeft;
       let newY = resizingElement.startTop;
       
-      // Handle different resize directions
       if (resizeDirection.includes('e')) {
         newWidth = Math.max(50, resizingElement.startWidth + dx);
       }
@@ -308,7 +281,6 @@ const TemplateEditor = ({ template, onBack }) => {
     setResizeDirection(null);
   };
 
-  // Add a function to handle clicks on the template background
 const handleTemplateClick = (e) => {
   // If clicking directly on the template (not on an element)
   if (e.target === templateRef.current) {
@@ -316,7 +288,6 @@ const handleTemplateClick = (e) => {
   }
 };
 
-// Update the ResizeHandles component to only show for selected elements
 const ResizeHandles = ({ element }) => {
   // Only show resize handles if this element is selected
   if (selectedElement !== element.id) {
@@ -356,7 +327,7 @@ const ResizeHandles = ({ element }) => {
     </>
   );
 };
-  // Render shape based on type
+  
   const renderShape = (element) => {
     const commonStyles = {
       position: 'absolute',
@@ -374,13 +345,13 @@ const ResizeHandles = ({ element }) => {
     
     switch (element.shapeType) {
       case 'triangle':
-        // For triangle, we use a different approach with clip-path
+       
         return (
           <div
             style={{
               ...commonStyles,
               clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
-              borderRadius: 0 // Override border-radius for triangle
+              borderRadius: 0 
             }}
             onMouseDown={(e) => handleMouseDown(e, element)}
           >
@@ -402,11 +373,9 @@ const ResizeHandles = ({ element }) => {
   };
 
   useEffect(() => {
-    // Add event listeners to document to handle mouse move and up events
+   
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-
-    // Cleanup event listeners
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
@@ -777,8 +746,6 @@ const ResizeHandles = ({ element }) => {
           return null;
         })}
       </div>
-      
-      {/* Add CSS for resize handles */}
       <style jsx>{`
         .resize-handle {
           position: absolute;
