@@ -1,4 +1,3 @@
-// TemplateGallery.js
 import React from 'react';
 
 const TemplateGallery = ({ templates, onTemplateSelect }) => {
