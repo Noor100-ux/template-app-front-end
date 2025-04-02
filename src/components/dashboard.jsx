@@ -1,4 +1,3 @@
-// Dashboard.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TemplateGallery from './TemplateGallery';
@@ -14,7 +13,6 @@ const Dashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // Updated templates with image URLs
   const templates = [
     {
       id: 1,
@@ -24,7 +22,7 @@ const Dashboard = () => {
       backgroundColor: '#F0F4F8',
       defaultText: 'Birthday Celebration',
       aspectRatio: 4/3,
-      imageUrl: birthdayImage, // Add a default image URL
+      imageUrl: birthdayImage,
       previewElements: [
         {
           id: 1,
@@ -52,7 +50,7 @@ const Dashboard = () => {
       backgroundColor: '#FFFFFF',
       defaultText: 'Wedding Invitation',
       aspectRatio: 10/7,
-      imageUrl: weddingImage, // Add a default image URL
+      imageUrl: weddingImage, 
       previewElements: [
         {
           id: 1,
@@ -74,14 +72,11 @@ const Dashboard = () => {
     }
   ];
 
-  // Check authentication on component mount
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      // Redirect to login if no token
       navigate('/login');
     } else {
-      // You might want to validate the token with your backend
       setIsAuthenticated(true);
     }
   }, [navigate]);
@@ -101,8 +96,6 @@ const Dashboard = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
-
-  // Don't render anything if not authenticated
   if (!isAuthenticated) {
     return null;
   }
