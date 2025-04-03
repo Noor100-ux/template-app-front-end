@@ -36,7 +36,7 @@ function Signup() {
       }
 
     
-      const response = await fetch('http://localhost:5055/register', {
+      const response = await fetch('https://template-app-backend-cts1.onrender.com/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
