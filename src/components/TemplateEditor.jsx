@@ -83,11 +83,10 @@ const TemplateEditor = ({ template, onBack }) => {
       const formData = new FormData();
       formData.append('file', blob, `${template.name}_template.png`);
       formData.append('email', userEmail);
-      const emailResponse = await fetch('http://localhost:5055/sendemail', {
+      const emailResponse = await fetch('https://template-app-backend-cts1.onrender.com/sendemail', {
         method: 'POST',
         body: formData
       });
-
       const result = await emailResponse.json();
       if (result.success) {
         setShareSuccess(result.message);
