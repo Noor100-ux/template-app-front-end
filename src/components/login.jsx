@@ -23,7 +23,7 @@ function Login() {
         setError('Please enter both email and password');
         return;
       }
-      const response = await fetch('http://localhost:5055/login', {
+      const response = await fetch('https://template-app-backend-cts1.onrender.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
