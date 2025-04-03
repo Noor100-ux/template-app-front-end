@@ -23,7 +23,7 @@ function Signup() {
 
   
     console.log('Signup Request:', {
-      url: 'http://localhost:5055/register',
+      url: 'https://template-app-backend-cts1.onrender.com/register',
       method: 'POST',
       body: requestBody
     });
